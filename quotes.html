@@ -3,13 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Amiri:wght@400&display=swap"
+      rel="stylesheet" />
     <title>Random Quote Display</title>
     <style>
-      body {
-        font-variant-caps: all-petite-caps;
-      }
       a {
         text-decoration: none;
+        color: inherit;
       }
       .widget {
         padding: 5px 5px;
@@ -25,6 +28,7 @@
         box-shadow: 2px 2px 1px 0px #000000;
         font-size: 1.5em;
         text-align: center;
+        font-family: 'Amiri', serif;
       }
     </style>
   </head>
@@ -35,7 +39,8 @@
       async function fetchQuote() {
         try {
           const port = '3001';
-          const host = 'http://54.176.155.208:3001/';
+          const host = 'http://54.176.155.208';
+          //const host = 'http://localhost';
           const response = await fetch(`${host}:${port}/quote`);
           const data = await response.json();
           return data;
@@ -47,7 +52,7 @@
 
       async function displayQuote() {
         const quoteContainer = document.getElementById('quoteContainer');
-        const interval = 60000; // 1 second interval
+        const interval = 86400000;
 
         async function updateQuote() {
           const quoteData = await fetchQuote();
@@ -55,7 +60,11 @@
           if (quoteData) {
             const quote = quoteData.quote;
             const url = quoteData.url;
-            quoteContainer.innerHTML = `<a href="${url}" target="_blank"><p>${quote}</p></a>`;
+            const book = quoteData.book;
+            const author = quoteData.author;
+            quoteContainer.innerHTML = `<a href="${url}" target="_blank"><p>${quote} ${
+              book ? '<br><b>—</b>' + book : ''
+            }${author ? '<b> | </b>' + author : ''}</p></a>`;
           } else {
             quoteContainer.textContent = 'No quote available.';
           }
