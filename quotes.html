@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Random Quote Display</title>
+    <style>
+      body {
+        font-variant-caps: all-petite-caps;
+      }
+      a {
+        text-decoration: none;
+      }
+      .widget {
+        padding: 5px 5px;
+        color: #000000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        max-width: 95%;
+        margin: auto;
+        border: 3px solid #000000;
+        border-radius: 5px;
+        box-shadow: 2px 2px 1px 0px #000000;
+        font-size: 1.5em;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="widget" id="quoteContainer"></div>
+
+    <script>
+      async function fetchQuote() {
+        try {
+          const port = '3001';
+          const host = 'http://54.176.155.208:3001/';
+          const response = await fetch(`${host}:${port}/quote`);
+          const data = await response.json();
+          return data;
+        } catch (error) {
+          console.error('Error fetching quote:', error);
+          return null;
+        }
+      }
+
+      async function displayQuote() {
+        const quoteContainer = document.getElementById('quoteContainer');
+        const interval = 60000; // 1 second interval
+
+        async function updateQuote() {
+          const quoteData = await fetchQuote();
+
+          if (quoteData) {
+            const quote = quoteData.quote;
+            const url = quoteData.url;
+            quoteContainer.innerHTML = `<a href="${url}" target="_blank"><p>${quote}</p></a>`;
+          } else {
+            quoteContainer.textContent = 'No quote available.';
+          }
+        }
+
+        updateQuote(); // Display the first quote immediately
+
+        setInterval(updateQuote, interval); // Fetch and display quote every second
+      }
+
+      displayQuote();
+    </script>
+  </body>
+</html>
